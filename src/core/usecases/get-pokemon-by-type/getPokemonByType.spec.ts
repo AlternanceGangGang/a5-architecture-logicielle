@@ -1,11 +1,7 @@
-import { InMemoryPokemonGateway } from "@/adapters/secondary/inMemoryPokemonGateway";
-import {
-  clefairy,
-  gastly,
-  haunter,
-  pikachu,
-} from "@/core/entities/pokemon.data";
-import { PokemonType } from "../../entities/pokemon";
+import {InMemoryPokemonGateway} from "@/adapters/secondary/inMemoryPokemonGateway";
+import {clefairy, gastly, gengar, haunter, pikachu,} from "@/core/entities/pokemon.data";
+import {PokemonType} from "../../entities/pokemon";
+import {getPokemonByType} from "./getPokemonByType"
 
 describe("List pokemon by type", () => {
   let pokemonGateway: InMemoryPokemonGateway;
@@ -15,23 +11,35 @@ describe("List pokemon by type", () => {
   // Tests about the type
   describe("Type does not exist", function () {
     it("should return an error if passing a wrong type", async () => {
-      expect(() =>
-        pokemonGateway.getPokemonByType("fre" as PokemonType)
-      ).toThrow("fre is invalid");
+      await expect(() => getPokemonByType(pokemonGateway, "fre" as PokemonType)
+      ).rejects.toThrow("fre is invalid");
     });
   });
   //Tests with GHOST Type
-  describe("test the ghost type research", function () {
+  describe("Test the ghost type research", function () {
     it("should have [] when there is no GHOST pokemon", async () => {
-      expect(await pokemonGateway.getPokemonByType(PokemonType.GHOST)).toEqual(
+      expect(await getPokemonByType(pokemonGateway, PokemonType.GHOST)).toEqual(
         []
       );
     });
-    it("should list all pokemons that belong to the type GHOST", async () => {
+    it("should list all pokemons that belong to the type ELECTRIC", async () => {
       pokemonGateway.feedWith(gastly, pikachu, clefairy, haunter);
-      expect(await pokemonGateway.getPokemonByType(PokemonType.GHOST)).toEqual([
+      expect(await getPokemonByType(pokemonGateway, PokemonType.ELECTRIC)).toEqual([
+        pikachu
+      ]);
+    });
+    it("should list all pokemons that belong to the type GHOST", async () => {
+      pokemonGateway.feedWith(gastly, pikachu, gengar);
+      expect(await getPokemonByType(pokemonGateway, PokemonType.GHOST)).toEqual([
         gastly,
-        haunter,
+        gengar
+      ]);
+    });
+    it("should retrieve the pokemons in the good order", async () => {
+      pokemonGateway.feedWith(gengar, gastly);
+      expect(await getPokemonByType(pokemonGateway, PokemonType.GHOST)).toEqual([
+        gastly,
+        gengar,
       ]);
     });
   });

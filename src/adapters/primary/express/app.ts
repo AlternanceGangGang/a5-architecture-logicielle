@@ -1,49 +1,31 @@
 import express from "express";
-import { Pokemon, PokemonType } from "@/core/entities/pokemon";
-import { pokemonGateway } from "@/adapters/primary/dependencies";
-import { TypeDoesNotExist } from "@/core/errors/typeDoesNotExist";
-import { PokemonNotFound } from "@/core/errors/pokemonNotFound";
-import { InvalidId } from "@/core/errors/invalidId";
+import moduleAlias from "module-alias";
+import path from "path";
 
-export const app = express();
+// This needs to come first for resolving aliases
+moduleAlias.addAlias("@", path.join(__dirname, "..", "..", "..", "..", "src"));
 
+const app = express();
+
+const getFolder: string = './routes/get/';
+
+const port = 3001
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const HelloWorld = (req: any, res: any)=>{
+    res.send("Hello World!");
+}
+app.get("/", HelloWorld);
 
-app.get("/pokemon", async (req, res) => {
-  const pokemon: Pokemon[] = await pokemonGateway.listAll();
-  res.send(pokemon);
-});
 
-app.get("/pokemon/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  pokemonGateway
-    .findOne(id)
-    .then((pokemon) => res.send(pokemon))
-    .catch((error) => {
-      if (error instanceof PokemonNotFound) {
-        res.status(404).send(error.message);
-      } else if (error instanceof InvalidId) {
-        res.status(400).send(error.message);
-      } else {
-        res.status(500).send(error.message);
-      }
-    });
-});
+//Require All get Folders
+require(`${getFolder}getPokemonList`)(app);
+require(`${getFolder}getPokemonById`)(app);
+require(`${getFolder}getPokemonByTypes`)(app);
+require(`${getFolder}getTypesList`)(app);
 
-app.get("/pokemon/type/:type", (req, res) => {
-  const type = req.params.type;
-  pokemonGateway
-    .getPokemonByType(type as PokemonType)
-    .then((pokemons: Pokemon[]) => res.send(pokemons))
-    .catch((error) => {
-      if (error instanceof TypeDoesNotExist) {
-        res.status(400).send(error.message);
-      } else {
-        res.status(500).send("Internal server error");
-      }
-    });
-});
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})
+
+export default app
