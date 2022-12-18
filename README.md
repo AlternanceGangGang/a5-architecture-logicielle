@@ -6,7 +6,6 @@
 - Carandang Axel
 - Duché Allan
 - Emamdee Rayane
-- Souchet Julie
 - Ughetti Eidan
 
 ## Librairies / Packages used
