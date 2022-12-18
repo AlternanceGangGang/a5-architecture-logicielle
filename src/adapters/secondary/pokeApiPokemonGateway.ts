@@ -5,8 +5,8 @@ import axios, {AxiosResponse} from "axios";
 export class PokeApiPokemonGateway implements PokemonGateway {
 
   public findOne(id: number): Promise<Pokemon> {
-    return fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-      .then((response) => response.json())
+    return axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`, { headers: { "Accept-Encoding": "gzip,deflate,compress" } })
+      .then((response) => response.data)
       .then((data: ApiPokemon) => this.toPokemon(data));
   }
 
