@@ -42,7 +42,7 @@ yarn run dev
 | ------ | ------ |
 | Get all pokemon |/pokemon|
 | Get one pokemon with id (between 1 and 901)|/pokemon/:id |
-| Get all type |/type |
+| Get all type |/types |
 | Get all pokemon for a specific type (select one type's name given by the route above)|/type/:type |
 
 Proudly made by lovely students :)
